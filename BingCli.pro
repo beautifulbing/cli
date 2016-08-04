@@ -10,7 +10,13 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    beautifulbing.cpp
+    beautifulbing.cpp \
+    bingextractor.cpp \
+    imagemeta.cpp \
+    wallpaper.cpp
 
 HEADERS += \
-    beautifulbing.h
+    beautifulbing.h \
+    bingextractor.h \
+    imagemeta.h \
+    wallpaper.h

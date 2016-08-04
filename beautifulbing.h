@@ -4,9 +4,7 @@
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QFile>
 #include <QTextStream>
-#include <QRegularExpression>
 
 class BeautifulBing : public QObject
 {
@@ -14,8 +12,8 @@ class BeautifulBing : public QObject
 
 public:
     explicit BeautifulBing(QObject *parent = 0);
-    void getAndApplyTodaysImage(const QString imageSavePath);
-    void getAndApplyTodaysImage(const QString imageSavePath,const QString metaSavePath);
+
+    void getMeTodaysImage(const QString imageSavePath,const QString metaSavePath=NULL);
 
 signals:
     void allDone();
@@ -25,16 +23,20 @@ protected slots:
     void imageDownloaded();
 
 protected:
+    //Func
+    void downloadImage(const QString url);
+    void storeMeta(QString title, QString author);
+
+    //Helper
+    void ensureTheDirectoryExists(QString dirPath);
+
     QTextStream cout;
+
     QNetworkAccessManager qnam;
     QNetworkReply *reply;
-    QFile *file;
+
     QString imageSavePath;
     QString metaSavePath;
-
-    void downloadImage(const QString url);
-    void saveMeta(QString title, QString author);
-    QRegularExpressionMatch regMatch(QString pattern,QString target);
 };
 
 #endif // BEAUTIFULBING_H

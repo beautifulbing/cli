@@ -1,39 +1,40 @@
 #include <QCoreApplication>
 #include "beautifulbing.h"
 
+QString argument(int index){
+    QStringList args=QCoreApplication::arguments();
+
+    if(index>=args.length())
+        return NULL;
+
+    return args.length()>1?args.at(index):NULL;
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    QString imageSavePath,metaSavePath;
 
     /*
      * command:
-     * bbcli [savepath]
+     * bbcli [image save path] [meta save path](optional)
      *
      * example:
-     * bbcli d:\bing\today.jpg
+     * bbcli d:\bing\today.jpg d:\bing\meta.ini
      */
-    {
-        QStringList *args=new QStringList(QCoreApplication::arguments());
 
-        if(args->length()<2) exit(0);
+    QString imageSavePath(argument(1));
 
-        imageSavePath=args->at(1);
+    if(imageSavePath.isEmpty())
+        exit(0);
 
-        if(args->length()>=3)
-            metaSavePath=args->at(2);
-
-        delete args;
-        args=Q_NULLPTR;
-    }
+    QString metaSavePath(argument(2));
 
     BeautifulBing bing;
-    QObject::connect(&bing,&BeautifulBing::allDone,&a,&QCoreApplication::quit);
 
-    if(metaSavePath.isEmpty())
-        bing.getAndApplyTodaysImage(imageSavePath);
-    else
-        bing.getAndApplyTodaysImage(imageSavePath,metaSavePath);
+    QObject::connect(&bing,&BeautifulBing::allDone,
+                     &a,&QCoreApplication::quit);
+
+    bing.getMeTodaysImage(imageSavePath,metaSavePath);
 
     return a.exec();
 }
