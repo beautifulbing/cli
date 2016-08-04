@@ -6,6 +6,7 @@
 #include <QNetworkReply>
 #include <QFile>
 #include <QTextStream>
+#include <QRegularExpression>
 
 class BeautifulBing : public QObject
 {
@@ -13,23 +14,27 @@ class BeautifulBing : public QObject
 
 public:
     explicit BeautifulBing(QObject *parent = 0);
-    void getAndApplyTodaysPicture(const QString pathToSave);
+    void getAndApplyTodaysImage(const QString imageSavePath);
+    void getAndApplyTodaysImage(const QString imageSavePath,const QString metaSavePath);
 
 signals:
     void allDone();
 
 protected slots:
     void httpFinished();
-    void pictureDownloaded();
+    void imageDownloaded();
 
 protected:
+    QTextStream cout;
     QNetworkAccessManager qnam;
     QNetworkReply *reply;
     QFile *file;
-    QString pathToSave;
-    QTextStream cout;
+    QString imageSavePath;
+    QString metaSavePath;
 
-    void downloadPicture(const QString url);
+    void downloadImage(const QString url);
+    void saveMeta(QString title, QString author);
+    QRegularExpressionMatch regMatch(QString pattern,QString target);
 };
 
 #endif // BEAUTIFULBING_H

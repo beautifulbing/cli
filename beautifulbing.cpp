@@ -2,7 +2,7 @@
 
 #include <QUrl>
 #include <QNetworkRequest>
-#include <QRegularExpression>
+#include <QSettings>
 #include "windows.h"
 
 BeautifulBing::BeautifulBing(QObject *parent)
@@ -12,17 +12,24 @@ BeautifulBing::BeautifulBing(QObject *parent)
 
 }
 
-void BeautifulBing::getAndApplyTodaysPicture(const QString pathToSave)
+void BeautifulBing::getAndApplyTodaysImage(const QString imageSavePath)
 {
     cout<<"Visiting Bing's main site..."<<endl;
 
-    this->pathToSave=pathToSave;
+    this->imageSavePath=imageSavePath;
 
     QUrl url("http://bing.com/");
 
     reply=qnam.get(QNetworkRequest(url));
 
     connect(reply,&QNetworkReply::finished,this,&BeautifulBing::httpFinished);
+}
+
+void BeautifulBing::getAndApplyTodaysImage(const QString imageSavePath, const QString metaSavePath)
+{
+    this->metaSavePath=metaSavePath;
+
+    getAndApplyTodaysImage(imageSavePath);
 }
 
 void BeautifulBing::httpFinished()
@@ -43,23 +50,50 @@ void BeautifulBing::httpFinished()
 
     QString res=reply->readAll();
 
-    QString pattern("g_img={url: \"(http://.+_\\d+x\\d+\\.jpg)\"");
-    QRegularExpression rx(pattern);
+    {//Fetch image url
+        QRegularExpressionMatch match=regMatch(
+                    "g_img={url: \"(http://.+_\\d+x\\d+\\.jpg)\""
+                    ,res);
 
-    QRegularExpressionMatch match=rx.match(res);
+        if(match.hasMatch()){
+            QString picUrl = match.captured(1);
 
-    if(match.hasMatch()){
-        QString picUrl = match.captured(1);
+            downloadImage(picUrl);
 
-        downloadPicture(picUrl);
+            cout<<"Image url is "<<picUrl<<endl;
+        }
+    }
 
-        cout<<"Picture url is "<<picUrl<<endl;
+    {//Fetch image meta
+        QRegularExpressionMatch match=regMatch(
+                    "<a id=\"sh_cp\" class=\"sc_light\" title=\"([^\"]+)\" alt=\""
+                    ,res);
+
+        if(match.hasMatch()){
+            QString meta = match.captured(1);
+
+            match=regMatch(
+                        "^(.+) \\(([^)]+)\\)$"
+                        ,meta);
+
+            if(!match.hasMatch()) return;
+
+            QString title=match.captured(1);
+            QString author=match.captured(2);
+
+            cout<<"Title: "<<title<<endl;
+            cout<<"Author: "<<author<<endl;
+
+            saveMeta(title,author);
+
+            cout<<"Meta has been saved to "<<metaSavePath<<endl;
+        }
     }
 }
 
-void BeautifulBing::pictureDownloaded()
+void BeautifulBing::imageDownloaded()
 {
-    file=new QFile(pathToSave);
+    file=new QFile(imageSavePath);
 
     if(file->open(QIODevice::WriteOnly)){
         file->write(reply->readAll());
@@ -68,10 +102,10 @@ void BeautifulBing::pictureDownloaded()
     file->close();
 
     if(file->exists()){
-        cout<<"Picture has been saved to "<<pathToSave<<endl;
+        cout<<"Image has been saved to "<<imageSavePath<<endl;
 
         //It's very important to be converted into a string
-        TCHAR *path = (TCHAR *)pathToSave.toStdWString().c_str();
+        TCHAR *path = (TCHAR *)imageSavePath.toStdWString().c_str();
 
         //Invoke WIN32 API to change desktop wallpaper
         SystemParametersInfo(
@@ -87,8 +121,25 @@ void BeautifulBing::pictureDownloaded()
     file=Q_NULLPTR;
 }
 
-void BeautifulBing::downloadPicture(const QString url)
+void BeautifulBing::downloadImage(const QString url)
 {
     reply=qnam.get(QNetworkRequest(QUrl(url)));
-    connect(reply,&QNetworkReply::finished,this,&BeautifulBing::pictureDownloaded);
+    connect(reply,&QNetworkReply::finished,this,&BeautifulBing::imageDownloaded);
+}
+
+void BeautifulBing::saveMeta(QString title, QString author)
+{
+    QSettings meta(metaSavePath,QSettings::IniFormat);
+
+    meta.beginGroup("meta");
+    meta.setValue("title",title);
+    meta.setValue("author",author);
+    meta.endGroup();
+}
+
+inline QRegularExpressionMatch BeautifulBing::regMatch(QString pattern,QString target)
+{
+    QRegularExpression rx(pattern);
+
+    return rx.match(target);
 }

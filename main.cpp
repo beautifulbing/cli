@@ -4,7 +4,7 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    QString saveTo;
+    QString imageSavePath,metaSavePath;
 
     /*
      * command:
@@ -18,7 +18,10 @@ int main(int argc, char *argv[])
 
         if(args->length()<2) exit(0);
 
-        saveTo=args->at(1);
+        imageSavePath=args->at(1);
+
+        if(args->length()>=3)
+            metaSavePath=args->at(2);
 
         delete args;
         args=Q_NULLPTR;
@@ -26,7 +29,11 @@ int main(int argc, char *argv[])
 
     BeautifulBing bing;
     QObject::connect(&bing,&BeautifulBing::allDone,&a,&QCoreApplication::quit);
-    bing.getAndApplyTodaysPicture(saveTo);
+
+    if(metaSavePath.isEmpty())
+        bing.getAndApplyTodaysImage(imageSavePath);
+    else
+        bing.getAndApplyTodaysImage(imageSavePath,metaSavePath);
 
     return a.exec();
 }
