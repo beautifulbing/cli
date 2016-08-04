@@ -15,13 +15,13 @@ Beautiful Bing CLI is part of Beautiful Bing software. It only provides basic fu
 命令格式 Command
 
 ```shell
-bbcli.exe [savepath]
+bbcli [image save path] [meta save path](optional)
 ```
 
 示例 Example
 
 ```shell
-bbcli.exe d:\bing\today.jpg
+bbcli d:\bing\today.jpg d:\bing\meta.ini
 ```
 
 ### 环境要求 Requirements
