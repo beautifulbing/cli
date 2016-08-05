@@ -10,8 +10,8 @@ class ImageMeta : public QObject
 public:
     explicit ImageMeta(QObject *parent = 0);
 
-    void set(QString key,QString value);
-    void store(QString path);
+    void set(const QString &key,const QString &value);
+    void store(const QString &path);
 signals:
 
 public slots:

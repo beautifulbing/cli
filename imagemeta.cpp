@@ -7,12 +7,12 @@ ImageMeta::ImageMeta(QObject *parent) : QObject(parent)
 
 }
 
-void ImageMeta::set(QString key, QString value)
+void ImageMeta::set(const QString &key, const QString &value)
 {
     meta[key]=value;
 }
 
-void ImageMeta::store(QString path)
+void ImageMeta::store(const QString &path)
 {
     QSettings ini(path,QSettings::IniFormat);
 

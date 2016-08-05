@@ -27,7 +27,8 @@ QString BingExtractor::fetchImageUrl()
 
 QString BingExtractor::fetchImageMeta()
 {
-    return regexpMatch("<a id=\"sh_cp\" class=\"sc_light\" title=\"([^\"]+)\" alt=\"");
+    return regexpMatch("<a id=\"sh_cp\" class=\"sc_light\" title=\"([^\"]+)\" alt=\"")
+            .replace("&amp;","&");
 }
 
 void BingExtractor::extractMeta()
@@ -41,14 +42,14 @@ void BingExtractor::extractMeta()
     }
 }
 
-QString BingExtractor::regexpMatch(QString pattern)
+QString BingExtractor::regexpMatch(const QString &pattern)
 {
     QRegularExpressionMatch match=regexpMatch(pattern,html);
 
     return match.hasMatch()?match.captured(1):NULL;
 }
 
-QRegularExpressionMatch BingExtractor::regexpMatch(QString pattern, QString text)
+QRegularExpressionMatch BingExtractor::regexpMatch(const QString &pattern, const QString &text)
 {
     QRegularExpression rx(pattern);
 

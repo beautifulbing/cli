@@ -13,7 +13,7 @@ class BeautifulBing : public QObject
 public:
     explicit BeautifulBing(QObject *parent = 0);
 
-    void getMeTodaysImage(const QString imageSavePath,const QString metaSavePath=NULL);
+    void getMeTodaysImage(const QString &imageSavePath, const QString &metaSavePath=NULL);
 
 signals:
     void allDone();
@@ -24,11 +24,12 @@ protected slots:
 
 protected:
     //Func
-    void downloadImage(const QString url);
-    void storeMeta(QString title, QString author);
+    void downloadImage(const QString &url);
+    void storeMeta(const QString &title, const QString &author);
 
     //Helper
-    void ensureTheDirectoryExists(QString dirPath);
+    void ensureTheDirectoryExists(const QString &dirPath);
+    QString makeAbsPath(const QString &path);
 
     QTextStream cout;
 

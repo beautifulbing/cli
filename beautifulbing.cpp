@@ -15,10 +15,10 @@ BeautifulBing::BeautifulBing(QObject *parent)
 
 }
 
-void BeautifulBing::getMeTodaysImage(const QString imageSavePath, const QString metaSavePath)
+void BeautifulBing::getMeTodaysImage(const QString &imageSavePath, const QString &metaSavePath)
 {
-    this->imageSavePath=imageSavePath;
-    this->metaSavePath=metaSavePath;
+    this->imageSavePath=makeAbsPath(imageSavePath);
+    this->metaSavePath=makeAbsPath(metaSavePath);
 
     cout<<"Visiting Bing's main site..."<<endl;
 
@@ -62,7 +62,7 @@ void BeautifulBing::httpFinished()
     }
 }
 
-void BeautifulBing::ensureTheDirectoryExists(QString dirPath)
+void BeautifulBing::ensureTheDirectoryExists(const QString &dirPath)
 {
     QDir dir;
     QFileInfo fi(dirPath);
@@ -70,6 +70,13 @@ void BeautifulBing::ensureTheDirectoryExists(QString dirPath)
     auto absPath=fi.absolutePath();
 
     dir.mkdir(absPath);
+}
+
+inline QString BeautifulBing::makeAbsPath(const QString &path)
+{
+    QFileInfo fi(path);
+
+    return fi.absoluteFilePath();
 }
 
 void BeautifulBing::imageDownloaded()
@@ -89,7 +96,7 @@ void BeautifulBing::imageDownloaded()
     }
 }
 
-void BeautifulBing::downloadImage(const QString url)
+void BeautifulBing::downloadImage(const QString &url)
 {
     cout<<"Image url is "<<url<<endl;
 
@@ -99,7 +106,7 @@ void BeautifulBing::downloadImage(const QString url)
             this,&BeautifulBing::imageDownloaded);
 }
 
-void BeautifulBing::storeMeta(QString title, QString author)
+void BeautifulBing::storeMeta(const QString &title, const QString &author)
 {   
     cout<<"Title: "<<title<<endl;
     cout<<"Author: "<<author<<endl;

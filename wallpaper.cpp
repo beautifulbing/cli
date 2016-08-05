@@ -23,10 +23,11 @@ void Wallpaper::apply()
                 SPIF_UPDATEINIFILE|SPIF_SENDCHANGE);
 }
 
-bool Wallpaper::store(QByteArray data)
+bool Wallpaper::store(const QByteArray &data)
 {
-    QFile file(filepath);
     bool flag=false;
+
+    QFile file(filepath);
 
     if(file.open(QIODevice::WriteOnly)){
         flag=file.write(data) != -1;

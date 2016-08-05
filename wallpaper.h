@@ -6,10 +6,11 @@
 class Wallpaper : public QObject
 {
     Q_OBJECT
+
 public:
     explicit Wallpaper(QString filepath, QObject *parent = 0);
 
-    bool store(QByteArray data);
+    bool store(const QByteArray &data);
     void apply();
 
 signals:

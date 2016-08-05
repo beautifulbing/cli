@@ -23,8 +23,8 @@ protected:
     QString fetchImageUrl();
     QString fetchImageMeta();
     void extractMeta();
-    QString regexpMatch(QString pattern);
-    QRegularExpressionMatch regexpMatch(QString pattern,QString text);
+    QString regexpMatch(const QString &pattern);
+    QRegularExpressionMatch regexpMatch(const QString &pattern,const QString &text);
 
     QString html;
     QString url;

@@ -5,7 +5,7 @@ Bing每日壁纸命令行程序是《Bing每日壁纸》软件的组成部分。
 1. 下载 Bing 今日美图
 2. 将今日美图设置为桌面壁纸
 
-Beautiful Bing CLI is part of Beautiful Bing software. It only provides basic functionality:
+Beautiful Bing CLI is part of the Beautiful Bing software. It only provides basic functionality:
 
 1. Download today's image
 2. Set it as your desktop wallpaper
